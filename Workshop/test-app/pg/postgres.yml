@@ -1,0 +1,36 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: test-summon-sidecar-app-backend
+  namespace: {{ TEST_APP_NAMESPACE_NAME }}
+spec:
+  selector:
+    app: test-summon-sidecar-app-backend
+  ports:
+    - port: 5432
+      targetPort: 5432
+
+---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: summon-sidecar-pg
+  labels:
+    app: test-summon-sidecar-app-backend
+spec:
+  serviceName: test-summon-sidecar-app-backend
+  selector:
+    matchLabels:
+      app: test-summon-sidecar-app-backend
+  template:
+    metadata:
+      labels:
+        app: test-summon-sidecar-app-backend
+    spec:
+      containers:
+      - name: test-summon-sidecar-app-backend
+        image: {{ TEST_APP_PG_DOCKER_IMAGE }}
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 5432

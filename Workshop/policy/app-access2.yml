@@ -1,0 +1,19 @@
+- !policy
+  id: orquestador-ajustadores-app
+  owner: !group devops
+  annotations:
+    description: This policy contains the creds to access the DB creds in conjur
+
+  body:
+    - &variables
+      - !variable db-username
+      - !variable db-password
+      - !variable url
+      - !variable secretless-url
+      - !variable secretless-username
+      - !variable secretless-password
+
+    - !permit
+      role: !layer /orquestador-ajustadores
+      privileges: [ read, execute ]
+      resources: *variables
